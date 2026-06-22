@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>test WebSocket connection</h1>
+    <button onclick="sendData()">Send coordinates</button>
+    
+    <script>
+        // 1. Устанавливаем соединение с сервером
+        const ws = new WebSocket("ws://127.0.0.1:8000/draw");
+        
+        // 2. Срабатывает при успешном подключении
+        ws.onopen = function() {
+            console.log("Connection established!");
+        };
+
+        // 3. Ловим чужие сообщения от сервера
+        ws.onmessage = function(event) {
+            console.log("New data was sent by server:", event.data);
+        };
+
+        // 4. Отправляем свой JSON на сервер по клику на кнопку
+        function sendData() {
+            const data = '{"x": 10, "y": 20, "pressure": 0.5}';
+            ws.send(data);
+            console.log("We sent data:", data);
+        }
+    </script>
+</body>
+</html>

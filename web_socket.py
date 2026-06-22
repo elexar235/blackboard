@@ -1,22 +1,25 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 
+active_connections = set()
 app = FastAPI()
 
-class Item(BaseModel) :
+class Load(BaseModel) : 
     name : str
-    price : float
+    price : float 
     is_offer : bool | None = None
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+@app.websocket("/draw")
+async def websocket_endpoint(websocket : WebSocket) :
+    await websocket.accept()
+    active_connections.add(websocket)
 
+    try:
+        while True:
+            data = await websocket.receive_text()
+            print(f"Websocket {websocket} has connected")
+            #### TODO A FOR CYCLE TO SEND EVERYBODY INFO
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None):
-    return {"item_id": item_id, "q": q}
-
-@app.put("/items/{item_id}")
-def update_item(item_id: int, item: Item):
-    return {"item_name" : item.name, "item_id" : item_id}
+    except WebSocketDisconnect :
+        print(f"Websocket {websocket} has disconnected.")
+        
