@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Blackboard</title>
+        <style>
+            body, html 
+            {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+            canvas
+            {
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="board"></canvas>
+
+
+        <script>
+            let canvas = document.getElementById("board");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            let ctx = canvas.getContext("2d");
+            ctx.lineCap = "round";
+            ctx.lineWidth = 5;
+
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+            let cameraX = 0;
+            let cameraY = 0;
+
+            canvas.addEventListener("mousedown", function(event)
+            {
+                isDrawing = true;
+                lastX = event.clientX;
+                lastY = event.clientY;
+
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(lastX + 0.001, lastY);
+                ctx.stroke();
+            });
+
+            canvas.addEventListener("mouseup", function(event)
+            {
+                isDrawing = false;
+            });
+
+            canvas.addEventListener("mousemove", function(event)
+            {
+                if (isDrawing == false) return;
+
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(event.clientX, event.clientY);
+                ctx.stroke();
+
+                lastX = event.clientX;
+                lastY = event.clientY;
+            });
+
+            canvas.addEventListener("wheel", function(event)
+            {
+                cameraX += event.deltaX;
+                cameraY += event.deltaY;
+            });
+
+        </script>
+    </body>
+</html>
